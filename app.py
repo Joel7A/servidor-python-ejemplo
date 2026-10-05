@@ -2,6 +2,16 @@ from flask import Flask, jsonify,request
 from servicio import UsuarioServicio
 
 app = Flask(__name__)
+
+@app.route("/", methods=["GET"])
+def bienvenida():
+    """Endpoint raíz para verificar que el servidor está vivo"""
+    return jsonify({
+        "estado": "Online",
+        "mensaje": "¡API funcionando correctamente en producción! 🚀",
+        "documentacion": "/apidocs"
+    }), 200
+
 servicio = UsuarioServicio()
 
 @app.route('/api/usuarios/registro', methods=['POST'])
