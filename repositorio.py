@@ -1,9 +1,10 @@
 import os
-import mysql.connector 
+import mysql.connector
 from mysql.connector import Error
 from dotenv import load_dotenv
 
 load_dotenv()
+
 
 class UsuarioRepositorio:
     def __init__(self):
@@ -18,7 +19,7 @@ class UsuarioRepositorio:
                 host=self.host,
                 user=self.user,
                 password=self.password,
-                database=self.database
+                database=self.database,
             )
             return conexion
         except Error as e:
@@ -63,4 +64,3 @@ class UsuarioRepositorio:
                 cursor.close()
                 conexion.close()
 
-    
