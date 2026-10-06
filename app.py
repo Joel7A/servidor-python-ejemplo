@@ -1,9 +1,9 @@
 from flask import Flask, jsonify, request
-from flasgger import Swagger  # <-- 1. IMPORTACIÓN AGREGADA
 from servicio import UsuarioServicio
+from flasgger import Swagger
 
 app = Flask(__name__)
-swagger = Swagger(app)        # <-- 2. INICIALIZACIÓN AGREGADA
+swagger = Swagger(app)
 
 @app.route("/", methods=["GET"])
 def bienvenida():
@@ -16,7 +16,7 @@ def bienvenida():
     """
     return jsonify({
         "estado": "Online",
-        "mensaje": "¡API funcionando correctamente en producción! 🚀",
+        "mensaje": "¡API funcionando correctamente en producción!",
         "documentacion": "/apidocs"
     }), 200
 
