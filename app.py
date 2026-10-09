@@ -5,6 +5,7 @@ from flasgger import Swagger
 app = Flask(__name__)
 swagger = Swagger(app)
 
+
 @app.route("/", methods=["GET"])
 def bienvenida():
     """
@@ -14,15 +15,19 @@ def bienvenida():
       200:
         description: Mensaje de bienvenida
     """
-    return jsonify({
-        "estado": "Online",
-        "mensaje": "¡API funcionando correctamente en producción!",
-        "documentacion": "/apidocs"
-    }), 200
+    return jsonify(
+        {
+            "estado": "Online",
+            "mensaje": "¡API funcionando correctamente en producción!",
+            "documentacion": "/apidocs",
+        }
+    ), 200
+
 
 servicio = UsuarioServicio()
 
-@app.route('/api/usuarios/registro', methods=['POST'])
+
+@app.route("/api/usuarios/registro", methods=["POST"])
 def registrar_usuario():
     """
     Registra un nuevo usuario en la base de datos de forma segura.
@@ -58,7 +63,8 @@ def registrar_usuario():
     respuesta, codigo_http = servicio.registrar_usuario(datos_json)
     return jsonify(respuesta), codigo_http
 
-@app.route('/api/usuarios/login', methods=['POST'])
+
+@app.route("/api/usuarios/login", methods=["POST"])
 def login_usuario():
     """
     Inicia sesión validando el Hash con Bcrypt.
@@ -97,9 +103,11 @@ def login_usuario():
 
         respuesta, codigo_http = servicio.login_usuario(correo, password)
         return jsonify(respuesta), codigo_http
-    
+
     except Exception as e:
         return jsonify({"error": f"Error al procesar la solicitud: {str(e)}"}), 500
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     app.run(debug=True, port=5000)
+
