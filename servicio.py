@@ -6,9 +6,10 @@ import logging
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
-    datefmt="%H:%M:%S"
+    datefmt="%H:%M:%S",
 )
 logger = logging.getLogger("ServicioSeguridad")
+
 
 class UsuarioServicio:
     def __init__(self):
@@ -24,7 +25,7 @@ class UsuarioServicio:
             return {"error": "Faltan datos requeridos"}, 400
 
         salt = bcrypt.gensalt()
-        password_hash = bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
+        password_hash = bcrypt.hashpw(password.encode("utf-8"), salt).decode("utf-8")
 
         resultado = self.repositorio.registrar_usuario(nombre, correo, password_hash)
 
@@ -36,18 +37,30 @@ class UsuarioServicio:
     def login_usuario(self, correo, password):
         if not correo or not password:
             return {"error": "Faltan datos requeridos"}, 400
-
+        # buscar el usuario en el repositorio
         usuario = self.repositorio.obtener_usuario_por_correo(correo)
-        logger.info(f"Usuario encontrado en BD (ID: {usuario['id']}). Extrayendo hash guardado...")
-        hash_almacenado = usuario['password_hash']
+
+        # validacionn del None, en las pruebas de swagger esta parte se debe de controlar
+        if not usuario:
+            logger.warning(
+                f"Iniciontento de login fallido, el correo {correo} mo existe"
+            )
+            return {"Error": "usuario no encontrado o credenciales invelidas."}, 401
+
+        # si paso la validación es seguro usar []
+        logger.info(
+            f"Usuario encontrado en BD (ID: {usuario['id']}). Extrayendo hash guardado..."
+        )
+        hash_almacenado = usuario["password_hash"]
         logger.info(f"Hash recuperado de MySQL: {hash_almacenado[:30]}...")
 
-        if not usuario:
-            return {"error": "Usuario no encontrado"}, 404
-
         ##verifica la contraseña ingresada con la contraseña almacenada en la base de datos
-        logger.info("Comparando contraseña plana ingresada contra el hash almacenado usando Bcrypt...")
-        password_valida = bcrypt.checkpw(password.encode('utf-8'), usuario['password_hash'].encode('utf-8'))
+        logger.info(
+            "Comparando contraseña plana ingresada contra el hash almacenado usando Bcrypt..."
+        )
+        password_valida = bcrypt.checkpw(
+            password.encode("utf-8"), hash_almacenado.encode("utf-8")
+        )
         logger.info(f"Resultado de la verificación: {password_valida}")
 
         if password_valida:
